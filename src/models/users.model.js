@@ -1,17 +1,30 @@
-import { Int32 } from "mongodb";
-import mongoose from "mongoose";
+import mongoose from 'mongoose';
+import bcrypt from 'bcryptjs';
 
-const projectShema = new mongoose.Schema({
-  id: { type: Int32 },
+const userSchema = new mongoose.Schema({
   name: { type: String, required: true },
-  email: { type: String, required: true },
-  // role: "admin | manager | developer",
-  avatar: { type: String, required: true },
-  createdAt: { type: Date }
-},
-{
+  email: { type: String, required: true, unique: true },
+  role: {
+    type: String,
+    enum: ['admin', 'manager', 'developer'],
+    default: 'developer',
+    required: true,
+  },
+  avatar: { type: String },
+  createdAt: { type: Date, default: Date.now },
+}, {
   timestamps: true,
   versionKey: false
-})
+});
 
-export default mongoose.model('user', projectShema);
+// 🔐 Encriptar contraseña antes de guardar
+userSchema.statics.encryptPassword = async (password) => {
+  return await bcrypt.hash(password, 10);
+};
+
+// 🔐 Comparar contraseñas
+userSchema.statics.comparePassword = async (plainPassword, hashedPassword) => {
+  return await bcrypt.compare(plainPassword, hashedPassword);
+};
+
+export default mongoose.model('User', userSchema);

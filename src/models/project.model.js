@@ -1,18 +1,26 @@
-import { Int32 } from "mongodb";
-import mongoose from "mongoose";
+import mongoose from 'mongoose';
 
-const projectShema = new mongoose.Schema({
-  nombre: { type: String, required: true },
-  id: { type: Int32 },
+const projectSchema = new mongoose.Schema({
   name: { type: String, required: true },
-  email: { type: String, required: true },
-  // role: "admin | manager | developer",
-  avatar: { type: String, required: true },
-  createdAt: { type: Date}
-},
-{
+  description: { type: String },
+  status: {
+    type: String,
+    enum: ['planning', 'in_progress', 'completed', 'cancelled'],
+    default: 'planning',
+  },
+  priority: {
+    type: String,
+    enum: ['low', 'medium', 'high'],
+    default: 'medium',
+  },
+  startDate: { type: Date },
+  endDate: { type: Date },
+  managerId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+  developersIds: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
+  createdAt: { type: Date, default: Date.now }
+}, {
   timestamps: true,
   versionKey: false
-})
+});
 
-export default mongoose.model('project', projectShema);
+export default mongoose.model('Project', projectSchema);

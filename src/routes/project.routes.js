@@ -1,19 +1,21 @@
 import { Router } from "express";
 import {
-  getAllProject,
-} from "../controller/project.controller.js";
+  getAllProjects,
+  createProject,
+  getOneProject,
+  updateProject,
+  deleteProject
+} from "../controller/projects.controller.js";
 
-const router = Router()
+import { verifyToken, isManagerOrAdmin } from "../middlewares/auth.js";
 
-router 
-  .get("/:nombre", getAllProject)
+const router = Router();
 
-  // .get("/one/:projectID", verifyToken, getOneProject)
-
-  // .post("/", verifyToken, createProject)
-
-  // .patch("/:projectID", verifyToken, updateProject)
-  
-  // .delete("/:projectID", verifyToken, deleteProject)
+router
+  .get("/", verifyToken, getAllProjects)
+  .post("/", [verifyToken, isManagerOrAdmin], createProject)
+  .get("/:projectID", verifyToken, getOneProject)
+  .put("/:projectID", [verifyToken, isManagerOrAdmin], updateProject)
+  .delete("/:projectID", [verifyToken, isManagerOrAdmin], deleteProject);
 
 export default router;

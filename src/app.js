@@ -1,51 +1,59 @@
 import express from 'express';
 import cors from 'cors';
-import projectRoutes from './routes/project.routes.js';
-import userRouter from './routes/user.route.js'
+import dotenv from 'dotenv';
+import connectDB from './config/db.js';
+
+import projectRoutes from './routes/project.routes.js ';
+import userRoutes from './routes/user.routes.js';
+import authRoutes from './routes/auth.routes.js';
+import taskRoutes from './routes/task.routes.js';
+
 import errorHandler from './middlewares/errorHandler.js';
-import connectDB from './config/db.js'
+
+dotenv.config(); // Carga las variables de entorno
 
 const app = express();
 
+// Conexión a base de datos
 connectDB();
 
+// Información básica de la app
 const appInfo = {
   nombre: "Mi Aplicación",
   author: "Autor",
   descripcion: "hola mundo",
   version: "1.0.0"
-}
+};
 
+// CORS configurado correctamente
 app.use(cors({
-  origin: ['', ''],
-  methods: ["GET", "POST", "PUT", "DELETE"],
-  allowedHeaders: ["Content-Type", "Authorization",  "x-access-token"],
-  credentials: true 
+  origin: ['http://localhost:5173'], // Agrega aquí tu frontend si lo tienes
+  methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
+  allowedHeaders: ["Content-Type", "Authorization", "x-access-token"],
+  credentials: true
 }));
 
-app.use(express.json({ limit: '500mb' }))
-app.use('/api/user', userRouter);
+// Middleware para recibir JSON
+app.use(express.json());
+
+// Rutas API
 app.use('/api/projects', projectRoutes);
-// app.use('/api/auth', authRouter );
-// app.use('/api/files', filesRouter);
-// app.use('/api/roles', rolesRouter);
-// app.use('/api/task', taskRouter);
-// app.use('/api/categories', categoriasRouter);
-// app.use('/api/subTask', subTaskRouter);
-// app.use('/api/forgot', forgotRouter);
+app.use('/api/users', userRoutes);
+app.use('/api/auth', authRoutes);
+app.use('/api/tasks', taskRoutes);
 
-
+// Middleware de manejo de errores
 app.use(errorHandler);
 
+// Ruta raíz
 app.get("/", (req, res) => {
   res.send(`
-    <h1>  Bienvenidos </h1>
-    <p> <strong> Name: </strong> ${appInfo.nombre} </p>
-    <p> <strong> Author: </strong> ${appInfo.author} </p>
-    <p> <strong> Descripcion: </strong> ${appInfo.descripcion} </p>
-    <p> <strong> Version: </strong> ${appInfo.version} </p>
-    `);
-})
-
+    <h1>Bienvenidos</h1>
+    <p><strong>Nombre:</strong> ${appInfo.nombre}</p>
+    <p><strong>Autor:</strong> ${appInfo.author}</p>
+    <p><strong>Descripción:</strong> ${appInfo.descripcion}</p>
+    <p><strong>Versión:</strong> ${appInfo.version}</p>
+  `);
+});
 
 export default app;
