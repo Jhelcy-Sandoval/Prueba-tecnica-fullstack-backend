@@ -44,8 +44,7 @@ export const signin = async (req, res) => {
       return res.status(404).json({ message: "Usuario no encontrado" });
     }
 
-    // ⚠️ Asegúrate de tener un método comparePassword implementado
-    const isPasswordValid = password === user.password; // Cambia esto si tienes hashing
+    const isPasswordValid = await User.comparePassword(password, user.password);
 
     if (!isPasswordValid) {
       return res.status(401).json({ token: null, message: "Contraseña incorrecta" });
@@ -70,6 +69,7 @@ export const signin = async (req, res) => {
     res.status(500).json({ message: "Error en inicio de sesión", error: error.message });
   }
 };
+
 
 export const getUseremail = async (req, res) => {
   const { email } = req.body;

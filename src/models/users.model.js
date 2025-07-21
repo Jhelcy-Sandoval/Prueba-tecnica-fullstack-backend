@@ -4,6 +4,7 @@ import bcrypt from 'bcryptjs';
 const userSchema = new mongoose.Schema({
   name: { type: String, required: true },
   email: { type: String, required: true, unique: true },
+  password: { type: String, required: true }, 
   role: {
     type: String,
     enum: ['admin', 'manager', 'developer'],
@@ -16,6 +17,7 @@ const userSchema = new mongoose.Schema({
   timestamps: true,
   versionKey: false
 });
+
 
 // 🔐 Encriptar contraseña antes de guardar
 userSchema.statics.encryptPassword = async (password) => {
