@@ -27,7 +27,7 @@ const appInfo = {
 
 // CORS configurado correctamente
 app.use(cors({
-  origin: ['http://localhost:5173'], // Agrega aquí tu frontend si lo tienes
+  origin: ['https://prueba-desarrollo-fullstack.netlify.app'], 
   methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
   allowedHeaders: ["Content-Type", "Authorization", "x-access-token"],
   credentials: true
